@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#121212" />
+  <rect x="106" y="56" width="300" height="400" rx="40" fill="#dc3545" stroke="#fff" stroke-width="16" />
+  <text x="256" y="285" font-family="Arial, sans-serif" font-weight="900" font-size="110" fill="#fff" text-anchor="middle">POP!</text>
+</svg>
