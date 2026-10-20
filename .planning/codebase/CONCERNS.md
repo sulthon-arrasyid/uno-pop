@@ -6,42 +6,55 @@ Severity legend: 🔴 High · 🟡 Medium · 🟢 Low / minor
 
 ## Testing & Quality
 
-- 🟡 **No automated tests and no CI checks.** `.github/workflows/static.yml` deploys straight to GitHub Pages with no lint/test gate. Regressions can only be caught manually. See `TESTING.md`.
-- 🟢 **No linter/formatter config** (no ESLint/Prettier). Indentation is inconsistent between files (4 spaces in `js/app.js`, 2 spaces in `sw.js`).
+- 🟡 **No automated tests and no CI checks.** `.github/workflows/static.yml` deploys straight to GitHub Pages with no lint/test gate. See `TESTING.md`.
+- 🟢 **No linter/formatter config** (no ESLint/Prettier). Indentation differs between files (4 spaces in `js/app.js`, 2 in `sw.js`).
 
-## Game Logic — Bugs & Fragile Areas
+## Persistence — Bugs & Fragile Areas
 
-- 🟡 **UNO card uses `.replace(' ', ...)` for line breaks, but its label has no space.** In `render()` (`js/app.js`): `DOM.activeCardValue.innerHTML = state.activeCard.label.replace(' ', '<br>')`. Labels like `"POP! +1"` break onto two lines as intended, but `"UNO!"` has no space so it renders on one line. Likely acceptable, but the formatting rule is implicit and brittle — changing a label's spacing silently changes layout.
-- 🟢 **`innerHTML` used for card label rendering.** `label` values are hardcoded constants in `DECK_COMPOSITION`, so this is not currently an injection vector, but using `innerHTML` for display text is a fragile pattern if labels ever become dynamic/user-derived.
-- 🟢 **No "deck empty" affordance beyond disabling the button.** When the deck is exhausted on a safe draw, status reads "Deck habis — Round selesai" and `btn-draw` is disabled; the only way forward is Reset. Intended, but worth noting as a UX dead-end if misread.
-- 🟢 **Magic number `12`.** `render()` hardcodes the deck size in `` `${state.deck.length}/12` ``. If `DECK_COMPOSITION` changes length, this denominator won't update automatically. Prefer `DECK_COMPOSITION.length`.
+- 🟡 **Unguarded `JSON.parse` on load.** `loadState()` in `js/app.js` does `Object.assign(state, JSON.parse(savedData))` with no try/catch. A corrupted or tampered `unoPopSaveData` value throws on startup and can leave the app in a broken state (nothing renders). Wrap in try/catch and fall back to a fresh game.
+- 🟡 **No schema/version validation on loaded save.** The entire `state` is trusted as-is. If the save shape changes in a future version (e.g. new card fields), old saves may render incorrectly. Consider a `schemaVersion` and migration/fallback.
+- 🟢 **Save persists `isGameOver: true` states.** Reloading mid-"game over" restores the finished state (draw button disabled). Intended-ish, but worth confirming it matches desired UX.
 
-## State & Persistence
+## Game Logic — Fragile Areas
 
-- 🟡 **No persistence.** Game state is in-memory only (`state` in `js/app.js`); a reload or app restart resets everything. For a PWA that users "install," losing an in-progress round on refresh may be surprising. Consider `localStorage` if persistence is desired.
+- 🟡 **`.replace(' ', '<br>')` for card label line breaks is implicit.** In `render()`, `"POP! +1"` wraps because it has a space; `"UNO!"` and `"+1"` do not. Changing a label's spacing silently changes layout.
+- 🟢 **`innerHTML` used for the active card label.** Labels are hardcoded constants in `buildCustomDeck()`, so not an injection vector today, but fragile if labels ever become dynamic/user-supplied.
+- 🟢 **Deck-builder has no upper bound / no total validation.** Number inputs accept any non-negative integer; a user could enter huge values. Only a single `+0` safe card is guaranteed. No warning if a deck is all-POP or has zero safe cards beyond the seeded `+0`.
+- 🟢 **Deck count denominator is derived at render time** (`deck.length + drawnCards.length`), which is correct now — but note the initial HTML shows a hardcoded `12/12` placeholder in `index.html` before first render.
 
 ## PWA / Service Worker — `sw.js`
 
-- 🟡 **Cache-first with no update path for the app shell.** The `fetch` handler returns cached responses first and only falls back to network on a miss. Once `index.html`/`app.js`/`style.css` are cached under `unopop-cache-v1`, users keep the old version until `CACHE_NAME` is bumped — there is no network-first or stale-while-revalidate strategy for navigations. **Deploying new code requires manually incrementing `CACHE_NAME`** (e.g. `v2`); otherwise returning users may not see updates.
-- 🟡 **Precache list must be kept in sync manually.** `urlsToCache` in `sw.js` duplicates the asset list; adding a new asset (e.g. a second icon) without updating this array means it won't be available offline.
-- 🟢 **No fetch error fallback.** If both cache and network fail (true offline + uncached request), the request rejects with no offline fallback page.
-- 🟢 **`skipWaiting()` + `clients.claim()` activate new SWs immediately.** Combined with cache-first, this can cause a mix of old/new assets within a single session when a `CACHE_NAME` bump does happen.
+- 🟡 **Cache-first with manual versioning.** `fetch` returns cached responses first; app-shell updates only reach users when `CACHE_NAME` is bumped (currently `unopop-cache-v2`). **Deploying new code requires incrementing `CACHE_NAME`**, otherwise returning users keep stale assets. No network-first or stale-while-revalidate for navigations.
+- 🟡 **Audio files are NOT precached.** `urlsToCache` lists `icon.svg` but omits `assets/audio/draw.mpeg`, `pop.mpeg`, `uno.mpeg`. Offline users (or first POP! before the file is fetched) may get no sound. Add them to the precache list (and bump `CACHE_NAME`).
+- 🟢 **`.mpeg` audio extension is unusual.** Files are named `*.mpeg`; MP3 audio is conventionally `.mp3`. Verify the actual codec/MIME is served correctly by GitHub Pages, as some hosts map `.mpeg` to video MIME types which can block `<audio>` playback.
+- 🟢 **`urlsToCache` must be kept in sync manually.** Adding assets without updating this array breaks offline availability.
+- 🟢 **No fetch error fallback** if both cache and network miss.
 
 ## Manifest / Icons
 
-- 🟡 **Single SVG icon only.** `manifest.json` declares one `assets/icon.svg` at `sizes: "512x512"` with `purpose: "any maskable"`. SVG manifest icons have inconsistent support across platforms (notably some Android/Chrome install flows prefer PNG). Maskable safe-zone is also not clearly respected by the current icon art. Consider adding PNG icons (192 & 512) for reliable installability.
-- 🟢 **Theme color mismatch.** `index.html` `<meta name="theme-color">` is `#121212` while `manifest.json` `theme_color` is `#1e1e1e`. Minor cosmetic inconsistency.
+- 🟡 **Single SVG icon only.** `manifest.json` declares one `assets/icon.svg` (512x512, `purpose: "any maskable"`). SVG manifest icons have inconsistent install support (some Android/Chrome flows prefer PNG). Consider adding PNG 192 & 512.
+- 🟢 **Theme color mismatch.** `index.html` `theme-color` is `#121212` while `manifest.json` `theme_color` is `#1e1e1e`.
+- 🟢 **`index.html` dropped `apple-mobile-web-app-capable` / status-bar-style tags** that an earlier version had (only `mobile-web-app-capable` and `apple-mobile-web-app-title` remain). Minor iOS standalone polish regression.
+
+## UI / Polish (relevant to the current milestone)
+
+- 🟢 **Deck-builder toggled via inline `style.display`.** Works, but mixing inline style state with CSS makes transitions/animations on the panel harder; consider a class-based toggle.
+- 🟢 **Status panel & deck-builder lean "form-like"** (dashed border, plain number inputs) versus the playful card area — visual inconsistency to address during polish.
+- 🟢 **No reduced-motion handling.** The flip animation and (future) effects don't respect `prefers-reduced-motion`; add a media-query guard for accessibility.
 
 ## Security
 
-- 🟢 **Low overall risk.** Static client-only app: no backend, no auth, no secrets, no user data, no external API calls. No secrets were found in the repository.
-- 🟢 **GitHub Pages workflow uploads the entire repo root** (`path: '.'`). Low risk here since there are no secrets, but it means any file added to the repo (including stray config/docs) is published publicly. Be mindful not to commit anything sensitive.
-- 🟢 **No Content-Security-Policy** meta tag. Not critical for this app, but a CSP would harden against future `innerHTML`-related risks.
+- 🟢 **Low overall risk.** Static client-only app: no backend, no auth, no secrets, no external API calls. No secrets found in the repository.
+- 🟢 **`localStorage` data is user-controlled** and parsed without validation — not a classic security hole (same-origin, self-inflicted), but see the unguarded-`JSON.parse` note above.
+- 🟢 **GitHub Pages workflow uploads the entire repo root** (`path: '.'`). Low risk (no secrets), but every committed file is published publicly.
+- 🟢 **No Content-Security-Policy** meta tag.
 
 ## Performance
 
-- 🟢 **Full re-render on every action.** `render()` rebuilds `#history-list` from scratch each draw. The DOM is tiny (≤12 history items), so impact is negligible; noted only as a scaling consideration.
+- 🟢 **Full re-render on every action** (`render()` rebuilds `#history-list` each draw). DOM is small, so negligible; noted for scaling only.
+- 🟢 **Three `Audio` objects constructed at load.** Fine, but if more SFX are added consider pooling / preloading strategy.
 
 ## Documentation / Housekeeping
 
-- 🟢 **README live URL caveat.** `README.md` notes the GitHub Pages URL (`https://sulthon-arrasyid.github.io/uno-pop/`) may need adjusting per repo name — verify it matches the actual deployment.
+- 🟡 **README is outdated vs. current features.** `README.md` still describes the original simple simulator and does not mention localStorage persistence, custom deck builder, audio SFX, haptics, or the flip animation. Update it.
+- 🟢 **README live URL caveat** — verify `https://sulthon-arrasyid.github.io/uno-pop/` matches the actual deployment.

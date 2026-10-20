@@ -5,53 +5,59 @@ Code style, naming, and patterns observed in the codebase.
 ## Code Style
 
 ### JavaScript (`js/app.js`, `sw.js`)
-- ES6+ syntax: `const`/`let` (no `var`), arrow functions, template literals, spread, destructuring.
+- ES6+ syntax: `const`/`let` (no `var`), arrow functions, template literals, spread, destructuring, `Object.assign`.
 - 4-space indentation in `js/app.js`; 2-space indentation in `sw.js`.
-- Semicolons used consistently.
-- Single quotes for strings.
-- File organized into labelled comment sections, e.g. `// --- Core Functions ---`, `// --- DOM References ---`.
-- Immutability leaning: `shuffleArray` copies with `[...array]` rather than mutating the input.
-- Side effects concentrated in `render()`; game logic functions mutate `state` then call `render()`.
+- Semicolons used consistently; single quotes for strings.
+- File organized into numbered banner comment sections (`// === N. Title ===`).
+- Defensive patterns: `playAudioSafe()` wraps audio `.play()` in `.catch`; `navigator.vibrate` and `serviceWorker` guarded by feature checks; `parseInt(...) || 0` fallback for deck-builder inputs.
+- Immutability leaning: `shuffleArray` copies with `[...array]` rather than mutating input.
+- Side effects (audio, haptics, persistence, animation) concentrated in `drawCard()`; display writes concentrated in `render()`.
 
 ### CSS (`css/style.css`)
 - CSS custom properties in `:root` for all theme colors.
 - Global reset (`* { box-sizing; margin; padding; user-select: none }`).
-- BEM-ish modifier pattern: base class + variant (`.card.green`, `.status-message.danger`).
-- Mobile-first touches: `-webkit-tap-highlight-color: transparent`, `user-select: none`, single responsive breakpoint `@media (max-width: 400px)`.
-- Mobile tap targets: buttons have `min-height: 60px`.
+- BEM-ish modifier pattern: base class + variant (`.card.green`, `.status-message.danger`, `.btn-primary`).
+- Animation via `@keyframes` + a trigger class (`.animate-flip`) re-applied from JS using a forced reflow.
+- Mobile-friendly: `-webkit-tap-highlight-color: transparent`, `user-select: none`, tap targets `min-height: 50px`, single responsive breakpoint `@media (max-width: 400px)`.
+- Section comments in Indonesian (`/* Tampilan Kartu Utama */`).
 
 ### HTML (`index.html`)
 - Semantic sectioning: `header`, `section` with role-conveying classes.
 - `lang="id"` (Indonesian).
 - Script loaded with `defer`.
-- PWA + Apple meta tags grouped at the top of `<head>`.
+- Panel visibility toggled via inline `style="display: none;"` manipulated from JS.
 
 ## Naming
 
-- JS constants: `UPPER_SNAKE_CASE` (`DECK_COMPOSITION`).
-- JS functions/vars: `camelCase` (`drawCard`, `accumulation`).
-- HTML IDs: kebab-case (`active-card-value`); buttons prefixed `btn-`.
+- JS constants: `UPPER_SNAKE_CASE` (`STORAGE_KEY`).
+- JS functions/vars: `camelCase` (`drawCard`, `buildCustomDeck`, `playAudioSafe`).
+- HTML IDs: kebab-case; buttons prefixed `btn-`, number inputs prefixed `input-`.
 - CSS classes: kebab-case; CSS vars grouped by role prefix (`--card-*`, `--btn-*`).
-- Card status types are a fixed vocabulary: `safe` / `pop` / `uno` (logic), mapped to colors `green` / `red` / `gold` and status types `ready|safe|danger|warning`.
+- Card vocabulary: types `safe` / `pop` / `uno`; colors `green` / `red` / `gold`; status types `ready|safe|danger|warning`.
 
-## State Management Pattern
+## State & Persistence Pattern
 
 - Single source of truth: the `state` object.
-- Mutate state in event handlers, then call `render()` once.
-- `render()` reads the whole `state` and writes all dynamic DOM (`textContent`, `className`, rebuilt `#history-list`).
+- Mutate state in handlers → `saveState()` → `render()`.
+- `render()` reads the whole `state` and rewrites all dynamic DOM (`textContent`, `className`, rebuilt `#history-list`).
+- Full `state` is persisted verbatim to `localStorage` (`JSON.stringify`) and restored with `Object.assign` on load.
 - DOM references cached once in the `DOM` object at startup.
 
 ## Error Handling
 
-- Minimal. The only explicit handling is the service worker registration `.then()/.catch()` logging success/failure to the console.
-- Defensive guard in `drawCard()`: early-returns when `state.isGameOver || state.deck.length === 0`.
-- No try/catch, no user-facing error UI, no input validation (there is no user text input to validate).
+- Pragmatic/defensive rather than exhaustive:
+  - Audio: `playAudioSafe()` catches and warns, never throws into gameplay.
+  - Service worker registration `.catch` logs an info message.
+  - Deck-builder inputs: `parseInt(...) || 0` guards NaN/empty.
+  - `drawCard()` early-returns when `isGameOver` or deck empty.
+- No try/catch around `JSON.parse(loadState)` (a corrupted save could throw — see CONCERNS.md).
+- No user-facing error UI.
 
 ## Comments & Documentation
 
-- Inline section-header comments in JS.
-- Indonesian comments in `.github/workflows/static.yml` and UI copy.
-- `README.md` documents purpose, features, and structure (in Indonesian).
+- Numbered banner comments structure `js/app.js`.
+- Indonesian comments throughout JS/CSS/HTML and UI copy.
+- `README.md` documents purpose, features, and structure (Indonesian).
 
 ## Language
 
