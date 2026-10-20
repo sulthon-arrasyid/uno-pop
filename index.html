@@ -7,17 +7,15 @@
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#121212">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="UNO Pop">
     
     <title>UNO Pop Deck</title>
     
-    <!-- Link ke file eksternal -->
+    <!-- Link ke file CSS -->
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="assets/icon.svg">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+    <link rel="apple-touch-icon" href="assets/icon.svg">
     
     <!-- Script di-load dengan 'defer' agar DOM selesai dirender lebih dulu -->
     <script src="js/app.js" defer></script>
@@ -29,6 +27,24 @@
         <h1>UNO Pop Deck</h1>
     </header>
 
+    <!-- Tombol untuk membuka pengaturan -->
+    <button id="btn-toggle-settings" class="btn-secondary">⚙️ Atur Deck Custom</button>
+
+    <!-- Panel Pengaturan Deck -->
+    <section class="deck-builder" id="deck-builder-panel" style="display: none;">
+        <h3>Pengaturan Jumlah Kartu</h3>
+        <div class="input-group">
+            <label>Kartu +1: <input type="number" id="input-plus1" value="5" min="0"></label>
+            <label>Kartu +2: <input type="number" id="input-plus2" value="2" min="0"></label>
+            <label>Kartu +3: <input type="number" id="input-plus3" value="1" min="0"></label>
+            <label>Kartu POP! +1: <input type="number" id="input-pop1" value="1" min="0"></label>
+            <label>Kartu POP! +2: <input type="number" id="input-pop2" value="1" min="0"></label>
+            <label>Kartu UNO!: <input type="number" id="input-uno" value="1" min="0"></label>
+        </div>
+        <button id="btn-save-deck" class="btn-primary">Simpan & Reset</button>
+    </section>
+
+    <!-- Status Permainan -->
     <section class="status-panel">
         <div class="status-row">
             <span>Sisa Kartu di Deck:</span>
@@ -41,17 +57,20 @@
         <div id="game-status" class="status-message ready">Siap bermain</div>
     </section>
 
+    <!-- Display Kartu -->
     <section class="card-display">
         <div id="active-card" class="card empty">
             <span id="active-card-value">?</span>
         </div>
     </section>
 
+    <!-- Tombol Aksi -->
     <section class="actions">
-        <button id="btn-draw">Ambil Kartu</button>
-        <button id="btn-reset">Reset Tumpukan</button>
+        <button id="btn-draw" class="btn-primary">Ambil Kartu</button>
+        <button id="btn-reset" class="btn-secondary">Reset Tumpukan</button>
     </section>
 
+    <!-- Riwayat Penarikan -->
     <section class="history-panel">
         <h3>Riwayat (<span id="history-count">0</span> Ditarik)</h3>
         <div id="history-list" class="history-list"></div>
