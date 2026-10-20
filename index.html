@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#121212">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="UNO Pop">
+    
+    <title>UNO Pop Deck</title>
+    
+    <!-- Link ke file eksternal -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/icon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Script di-load dengan 'defer' agar DOM selesai dirender lebih dulu -->
+    <script src="js/app.js" defer></script>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <h1>UNO Pop Deck</h1>
+    </header>
+
+    <section class="status-panel">
+        <div class="status-row">
+            <span>Sisa Kartu di Deck:</span>
+            <span id="deck-count">12/12</span>
+        </div>
+        <div class="status-row">
+            <span>Total Akumulasi:</span>
+            <span id="accum-count">0</span>
+        </div>
+        <div id="game-status" class="status-message ready">Siap bermain</div>
+    </section>
+
+    <section class="card-display">
+        <div id="active-card" class="card empty">
+            <span id="active-card-value">?</span>
+        </div>
+    </section>
+
+    <section class="actions">
+        <button id="btn-draw">Ambil Kartu</button>
+        <button id="btn-reset">Reset Tumpukan</button>
+    </section>
+
+    <section class="history-panel">
+        <h3>Riwayat (<span id="history-count">0</span> Ditarik)</h3>
+        <div id="history-list" class="history-list"></div>
+    </section>
+</div>
+
+</body>
+</html>
