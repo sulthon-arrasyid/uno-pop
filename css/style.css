@@ -214,23 +214,56 @@ header h1 .title-mark::before {
     font-size: 52px;
     font-weight: 700;
     line-height: 1.05;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.45);
-    border: 8px solid white;
-    box-shadow: 0 12px 24px rgba(0,0,0,0.7);
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
     padding: 10px;
     word-break: break-word;
 }
 
-.card.green { background-color: var(--safe); color: white; }
-.card.red { background-color: var(--danger); color: white; }
-.card.gold { background-color: var(--special); color: #111; text-shadow: none; border-color: white; }
+/* Kartu aksen datar (hijau/merah) */
+.card.green { background-color: var(--safe); color: #fff; }
+.card.red { background-color: var(--danger); color: #fff; }
+
+/* Kartu UNO! — emas metalik + glow + shine (lihat ANIMASI) */
+.card.gold {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #C8920A 0%, #F2B705 40%, #FFE08A 55%, #F2B705 70%, #C8920A 100%);
+    color: #1A1A1A;
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink), 0 0 18px rgba(242, 183, 5, 0.6);
+}
+
+.card.gold::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+    transform: skewX(-20deg);
+    animation: unoShine 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Kartu kosong / idle (lihat ANIMASI untuk idlePulse) */
 .card.empty {
-    background-color: #2c2c2c;
-    border-color: #444;
-    color: #555;
-    text-shadow: none;
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+    background: var(--surface);
+    border: 3px dashed var(--ink);
+    color: var(--ink);
+    box-shadow: none;
     font-size: 5rem;
+    animation: idlePulse 2.4s ease-in-out infinite;
+}
+
+.card.empty::after {
+    content: "Tap untuk menarik";
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    margin-top: 8px;
 }
 
 /* Tombol Aksi */
@@ -317,7 +350,26 @@ button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow
     animation: flipCard 0.4s ease-out forwards;
 }
 
-/* ============ 5. RESPONSIVE ============ */
+/* Shine sweep kartu UNO! */
+@keyframes unoShine {
+    0%, 70% { left: -60%; }
+    100% { left: 140%; }
+}
+
+/* Pulse halus kartu idle */
+@keyframes idlePulse {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+/* ============ 5. REDUCED-MOTION ============ */
+/* Fase 2 hanya menjaga 2 efek baru di sini; sapuan lengkap ada di Fase 4 (A11Y-01). */
+@media (prefers-reduced-motion: reduce) {
+    .card.gold::after { animation: none; }
+    .card.empty { animation: none; }
+}
+
+/* ============ 6. RESPONSIVE ============ */
 @media (max-width: 400px) {
     .actions { flex-direction: column; }
     .card { width: 180px; height: 270px; font-size: 2.8rem; }
