@@ -166,6 +166,7 @@ header h1 .title-mark::before {
 .status-row {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
     font-size: 15px;
     font-weight: 700;
     margin-bottom: 12px;
