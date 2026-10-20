@@ -1,18 +1,22 @@
-// --- Game Data & State ---
-const DECK_COMPOSITION = [
-    { type: 'safe', value: 0, label: '+0', color: 'green' },
-    { type: 'safe', value: 1, label: '+1', color: 'green' },
-    { type: 'safe', value: 1, label: '+1', color: 'green' },
-    { type: 'safe', value: 1, label: '+1', color: 'green' },
-    { type: 'safe', value: 1, label: '+1', color: 'green' },
-    { type: 'safe', value: 1, label: '+1', color: 'green' },
-    { type: 'safe', value: 2, label: '+2', color: 'green' },
-    { type: 'safe', value: 2, label: '+2', color: 'green' },
-    { type: 'safe', value: 3, label: '+3', color: 'green' },
-    { type: 'pop',  value: 1, label: 'POP! +1', color: 'red' },
-    { type: 'pop',  value: 2, label: 'POP! +2', color: 'red' },
-    { type: 'uno',  value: 0, label: 'UNO!', color: 'gold' }
-];
+// ==========================================
+// 1. Inisialisasi Audio (Dengan Pengaman)
+// ==========================================
+const sfxDraw = new Audio('assets/audio/draw.mpeg');
+const sfxPop = new Audio('assets/audio/pop.mpeg');
+const sfxUno = new Audio('assets/audio/uno.mpeg');
+
+// Fungsi pembantu agar error audio lokal tidak membuat web crash
+function playAudioSafe(audioElement) {
+    audioElement.currentTime = 0;
+    audioElement.play().catch(error => {
+        console.warn("Audio belum siap atau file tidak ditemukan, abaikan.", error);
+    });
+}
+
+// ==========================================
+// 2. Deklarasi State & Variabel Global
+// ==========================================
+const STORAGE_KEY = 'unoPopSaveData';
 
 const state = {
     deck: [],
@@ -24,7 +28,6 @@ const state = {
     statusType: 'ready'
 };
 
-// --- DOM References ---
 const DOM = {
     deckCount: document.getElementById('deck-count'),
     accumCount: document.getElementById('accum-count'),
@@ -33,11 +36,55 @@ const DOM = {
     activeCardValue: document.getElementById('active-card-value'),
     btnDraw: document.getElementById('btn-draw'),
     btnReset: document.getElementById('btn-reset'),
+    btnToggleSettings: document.getElementById('btn-toggle-settings'),
+    btnSaveDeck: document.getElementById('btn-save-deck'),
+    deckBuilderPanel: document.getElementById('deck-builder-panel'),
     historyList: document.getElementById('history-list'),
     historyCount: document.getElementById('history-count')
 };
 
-// --- Core Functions ---
+// ==========================================
+// 3. Sistem LocalStorage
+// ==========================================
+function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadState() {
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    if (savedData) {
+        Object.assign(state, JSON.parse(savedData));
+        return true;
+    }
+    return false;
+}
+
+// ==========================================
+// 4. Logika Pembuatan Deck Custom
+// ==========================================
+function buildCustomDeck() {
+    const qtyPlus1 = parseInt(document.getElementById('input-plus1').value) || 0;
+    const qtyPlus2 = parseInt(document.getElementById('input-plus2').value) || 0;
+    const qtyPlus3 = parseInt(document.getElementById('input-plus3').value) || 0;
+    const qtyPop1 = parseInt(document.getElementById('input-pop1').value) || 0;
+    const qtyPop2 = parseInt(document.getElementById('input-pop2').value) || 0;
+    const qtyUno = parseInt(document.getElementById('input-uno').value) || 0;
+
+    const newDeck = [];
+    
+    // Minimal 1 kartu +0 sebagai standar aman
+    newDeck.push({ type: 'safe', value: 0, label: '+0', color: 'green' });
+    
+    for(let i=0; i<qtyPlus1; i++) newDeck.push({ type: 'safe', value: 1, label: '+1', color: 'green' });
+    for(let i=0; i<qtyPlus2; i++) newDeck.push({ type: 'safe', value: 2, label: '+2', color: 'green' });
+    for(let i=0; i<qtyPlus3; i++) newDeck.push({ type: 'safe', value: 3, label: '+3', color: 'green' });
+    for(let i=0; i<qtyPop1; i++) newDeck.push({ type: 'pop', value: 1, label: 'POP! +1', color: 'red' });
+    for(let i=0; i<qtyPop2; i++) newDeck.push({ type: 'pop', value: 2, label: 'POP! +2', color: 'red' });
+    for(let i=0; i<qtyUno; i++) newDeck.push({ type: 'uno', value: 0, label: 'UNO!', color: 'gold' });
+
+    return newDeck;
+}
+
 function shuffleArray(array) {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -47,14 +94,26 @@ function shuffleArray(array) {
     return shuffled;
 }
 
-function initGame() {
-    state.deck = shuffleArray(DECK_COMPOSITION);
+// ==========================================
+// 5. Logika Utama Permainan
+// ==========================================
+function initGame(forceReset = false) {
+    // Jika tidak dipaksa reset dan memori ada, muat ulang
+    if (!forceReset && loadState()) {
+        render();
+        return;
+    }
+
+    // Jika force reset, mulai dari awal dengan settingan deck baru
+    state.deck = shuffleArray(buildCustomDeck());
     state.drawnCards = [];
     state.accumulation = 0;
     state.activeCard = null;
     state.isGameOver = false;
     state.statusText = 'Siap bermain';
     state.statusType = 'ready';
+    
+    saveState();
     render();
 }
 
@@ -62,9 +121,19 @@ function drawCard() {
     if (state.isGameOver || state.deck.length === 0) return;
 
     const card = state.deck.pop();
+    
+    // Haptic Feedback (Getar HP)
+    if (navigator.vibrate) navigator.vibrate(card.type === 'safe' ? 50 : 200);
+
+    // Mainkan Audio dengan fungsi pengaman
+    if (card.type === 'safe') playAudioSafe(sfxDraw);
+    else if (card.type === 'pop') playAudioSafe(sfxPop);
+    else if (card.type === 'uno') playAudioSafe(sfxUno);
+
     state.drawnCards.push(card);
     state.activeCard = card;
 
+    // Kalkulasi Logika Permainan
     if (card.type === 'safe') {
         state.accumulation += card.value;
         state.statusText = 'AMAN';
@@ -88,11 +157,21 @@ function drawCard() {
         state.isGameOver = true;
     }
 
+    saveState();
+
     render();
+    
+    // Animasi Muncul Kartu
+    DOM.activeCard.classList.remove('animate-flip');
+    void DOM.activeCard.offsetWidth; // Trigger reflow animasi
+    DOM.activeCard.classList.add('animate-flip');
 }
 
+// ==========================================
+// 6. UI Renderer
+// ==========================================
 function render() {
-    DOM.deckCount.textContent = `${state.deck.length}/12`;
+    DOM.deckCount.textContent = `${state.deck.length} / ${state.deck.length + state.drawnCards.length}`;
     DOM.accumCount.textContent = state.accumulation;
     DOM.gameStatus.textContent = state.statusText;
     DOM.gameStatus.className = `status-message ${state.statusType}`;
@@ -117,17 +196,33 @@ function render() {
     });
 }
 
-// --- Event Listeners & Init ---
-DOM.btnDraw.addEventListener('click', drawCard);
-DOM.btnReset.addEventListener('click', initGame);
+// ==========================================
+// 7. Event Listeners & Bootstrapping
+// ==========================================
 
+// Tombol Panel Setting
+DOM.btnToggleSettings.addEventListener('click', () => {
+    const isHidden = DOM.deckBuilderPanel.style.display === 'none';
+    DOM.deckBuilderPanel.style.display = isHidden ? 'block' : 'none';
+});
+
+// Tombol Simpan Setting Deck
+DOM.btnSaveDeck.addEventListener('click', () => {
+    initGame(true); // Param `true` akan memaksa game reset
+    DOM.deckBuilderPanel.style.display = 'none';
+});
+
+// Tombol Main & Reset
+DOM.btnDraw.addEventListener('click', drawCard);
+DOM.btnReset.addEventListener('click', () => initGame(true));
+
+// Mulai Game
 initGame();
 
-// --- PWA Service Worker Registration ---
+// Registrasi PWA (Abaikan pesan error jika sw.js belum ada di lokal)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Service Worker registered', reg))
-            .catch(err => console.log('Service Worker registration failed:', err));
+            .catch(err => console.log('Info: Service Worker tidak aktif di local mode.', err));
     });
 }
