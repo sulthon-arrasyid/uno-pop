@@ -1,14 +1,63 @@
+/* =========================================================
+   UNO Pop — Soft Neo-Brutalist Theme
+   Urutan: TOKENS -> BASE/TIPOGRAFI -> KOMPONEN -> ANIMASI -> REDUCED-MOTION
+   ========================================================= */
+
+/* ============ 1. TOKENS ============ */
 :root {
-    --bg-dark: #121212;
-    --panel-bg: #1e1e1e;
-    --text-main: #f5f5f5;
-    --text-muted: #aaaaaa;
-    --yellow-title: #FFD700;
-    --card-green: #28a745;
-    --card-red: #dc3545;
-    --card-gold: #ffc107;
-    --btn-primary-color: #0f52ba;
-    --btn-secondary-color: #4a4a4a;
+    /* Permukaan */
+    --bg: #F4ECD8;          /* krem latar */
+    --surface: #FFFDF7;     /* panel & kartu */
+    --ink: #1A1A1A;         /* teks + semua garis */
+    --ink-soft: #5B5B52;    /* label redup */
+
+    /* Brand + aksen fungsional */
+    --brand: #FFD400;       /* kuning brand */
+    --safe: #1FA35A;        /* Aman (hijau) */
+    --danger: #E23B3B;      /* POP! (merah) */
+    --special: #F2B705;     /* UNO! (emas) */
+
+    /* Bahasa bentuk */
+    --outline: 2px;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 3px 3px 0 var(--ink);
+
+    /* Pola titik (halus) */
+    --dot: rgba(26,26,26,0.06);
+
+    /* Gerak */
+    --dur-fast: 120ms;
+    --dur: 240ms;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ============ 2. BASE / TIPOGRAFI ============ */
+
+/* Font di-host sendiri (lihat assets/fonts/, dipraca­che di sw.js) */
+@font-face {
+    font-family: 'Fredoka';
+    src: url('../assets/fonts/fredoka-600.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Fredoka';
+    src: url('../assets/fonts/fredoka-700.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Nunito';
+    src: url('../assets/fonts/nunito-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Nunito';
+    src: url('../assets/fonts/nunito-700.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
 }
 
 * {
@@ -19,10 +68,14 @@
 }
 
 body {
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.6;
+    background-color: var(--bg);
+    background-image: radial-gradient(var(--dot) 1.5px, transparent 1.5px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: 'Nunito', 'Segoe UI', Roboto, system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -36,14 +89,18 @@ body {
 }
 
 header h1 {
-    color: var(--yellow-title);
+    font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
     text-align: center;
-    font-size: 2.2rem;
-    font-weight: 800;
-    margin-bottom: 15px;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 2px;
 }
+
+/* ============ 3. KOMPONEN ============ */
 
 /* Kustomisasi Deck Builder */
 .deck-builder {
@@ -55,25 +112,27 @@ header h1 {
 }
 
 .deck-builder h3 {
+    font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
     margin-bottom: 10px;
-    font-size: 1.1rem;
-    color: var(--yellow-title);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--brand);
 }
 
 .input-group label {
-    display: flex; 
-    justify-content: space-between; 
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 8px;
     align-items: center;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .input-group input {
-    width: 60px; 
-    text-align: center; 
-    background: #111; 
-    color: white; 
-    border: 1px solid #444; 
+    width: 60px;
+    text-align: center;
+    background: #111;
+    color: white;
+    border: 1px solid #444;
     border-radius: 4px;
     padding: 5px;
     font-size: 1rem;
@@ -81,7 +140,7 @@ header h1 {
 
 /* Panel Status */
 .status-panel {
-    background-color: var(--panel-bg);
+    background-color: var(--surface);
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 20px;
@@ -92,24 +151,31 @@ header h1 {
 .status-row {
     display: flex;
     justify-content: space-between;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 700;
     margin-bottom: 12px;
+}
+
+#deck-count, #accum-count {
+    font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
 }
 
 .status-message {
     text-align: center;
-    font-size: 1.15rem;
-    font-weight: bold;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
     padding: 14px 12px;
     border-radius: 8px;
-    transition: all 0.2s ease;
+    transition: all var(--dur) ease;
 }
 
 .status-message.ready { background-color: #333; color: var(--text-main); }
-.status-message.safe { background-color: var(--card-green); color: white; }
-.status-message.danger { background-color: var(--card-red); color: white; }
-.status-message.warning { background-color: var(--card-gold); color: #111; }
+.status-message.safe { background-color: var(--safe); color: white; }
+.status-message.danger { background-color: var(--danger); color: white; }
+.status-message.warning { background-color: var(--special); color: #111; }
 
 /* Tampilan Kartu Utama */
 .card-display {
@@ -129,9 +195,10 @@ header h1 {
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: 3.2rem;
-    font-weight: 900;
-    line-height: 1.1;
+    font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.05;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.45);
     border: 8px solid white;
     box-shadow: 0 12px 24px rgba(0,0,0,0.7);
@@ -139,9 +206,9 @@ header h1 {
     word-break: break-word;
 }
 
-.card.green { background-color: var(--card-green); color: white; }
-.card.red { background-color: var(--card-red); color: white; }
-.card.gold { background-color: var(--card-gold); color: #111; text-shadow: none; border-color: white; }
+.card.green { background-color: var(--safe); color: white; }
+.card.red { background-color: var(--danger); color: white; }
+.card.gold { background-color: var(--special); color: #111; text-shadow: none; border-color: white; }
 .card.empty {
     background-color: #2c2c2c;
     border-color: #444;
@@ -149,27 +216,6 @@ header h1 {
     text-shadow: none;
     box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
     font-size: 5rem;
-}
-
-/* --- ANIMASI 3D FLIP --- */
-@keyframes flipCard {
-    0% { 
-        transform: perspective(600px) rotateY(90deg) scale(0.8); 
-        opacity: 0.3; 
-    }
-    60% { 
-        transform: perspective(600px) rotateY(-15deg) scale(1.05); 
-        opacity: 1; 
-    }
-    100% { 
-        transform: perspective(600px) rotateY(0deg) scale(1); 
-        opacity: 1; 
-    }
-}
-
-.card.animate-flip {
-    transform-origin: center;
-    animation: flipCard 0.4s ease-out forwards;
 }
 
 /* Tombol Aksi */
@@ -184,12 +230,13 @@ button {
     min-height: 50px;
     border: none;
     border-radius: 10px;
+    font-family: 'Nunito', 'Segoe UI', Roboto, system-ui, sans-serif;
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: 700;
     color: white;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    transition: transform 0.1s ease, filter 0.2s;
+    transition: transform var(--dur-fast) ease, filter var(--dur) ease;
     padding: 10px;
 }
 
@@ -203,15 +250,16 @@ button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow
 
 /* Riwayat */
 .history-panel {
-    background-color: var(--panel-bg);
+    background-color: var(--surface);
     border-radius: 12px;
     padding: 16px;
     border: 1px solid #333;
 }
 
 .history-panel h3 {
+    font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
     font-size: 0.9rem;
-    color: var(--text-muted);
+    color: var(--ink-soft);
     margin-bottom: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -227,15 +275,39 @@ button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow
     padding: 6px 12px;
     border-radius: 6px;
     font-size: 0.9rem;
-    font-weight: bold;
+    font-weight: 700;
     color: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-.history-item.green { background-color: var(--card-green); }
-.history-item.red { background-color: var(--card-red); }
-.history-item.gold { background-color: var(--card-gold); color: #111; }
+.history-item.green { background-color: var(--safe); }
+.history-item.red { background-color: var(--danger); }
+.history-item.gold { background-color: var(--special); color: #111; }
 
+/* ============ 4. ANIMASI ============ */
+
+/* --- ANIMASI 3D FLIP (jangan diubah) --- */
+@keyframes flipCard {
+    0% {
+        transform: perspective(600px) rotateY(90deg) scale(0.8);
+        opacity: 0.3;
+    }
+    60% {
+        transform: perspective(600px) rotateY(-15deg) scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: perspective(600px) rotateY(0deg) scale(1);
+        opacity: 1;
+    }
+}
+
+.card.animate-flip {
+    transform-origin: center;
+    animation: flipCard 0.4s ease-out forwards;
+}
+
+/* ============ 5. RESPONSIVE ============ */
 @media (max-width: 400px) {
     .actions { flex-direction: column; }
     .card { width: 180px; height: 270px; font-size: 2.8rem; }
