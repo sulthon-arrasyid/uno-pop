@@ -276,27 +276,30 @@ header h1 .title-mark::before {
 button {
     flex: 1;
     min-height: 50px;
-    border: none;
-    border-radius: 10px;
+    border: var(--outline) solid var(--ink);
+    border-radius: var(--radius);
     font-family: 'Nunito', 'Segoe UI', Roboto, system-ui, sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
-    color: white;
+    color: var(--ink);
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    transition: transform var(--dur-fast) ease, filter var(--dur) ease;
+    box-shadow: var(--shadow);
+    transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
     padding: 10px;
 }
 
-button:active { transform: scale(0.97); }
-button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+/* Tekan = "push-down": tombol tenggelam ke bayangannya */
+button:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--ink);
+}
 
-/* Catatan: detail tombol pill (outline+shadow+press) diselesaikan di Fase 2.
-   Di sini hanya pemetaan warna ke token agar tidak rusak. */
-.btn-primary { background-color: var(--brand); color: var(--ink); }
-.btn-primary:hover:not(:disabled) { filter: brightness(1.05); }
-.btn-secondary { background-color: var(--surface); color: var(--ink); border: var(--outline) solid var(--ink); margin-bottom: 10px; }
-.btn-secondary:hover:not(:disabled) { filter: brightness(0.97); }
+button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-primary { background: var(--brand); color: var(--ink); }
+.btn-primary:hover:not(:disabled) { filter: brightness(1.04); }
+.btn-secondary { background: var(--surface); color: var(--ink); margin-bottom: 10px; }
+.btn-secondary:hover:not(:disabled) { filter: brightness(0.98); }
 
 /* Riwayat */
 .history-panel h3 {
@@ -316,16 +319,17 @@ button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow
 
 .history-item {
     padding: 6px 12px;
-    border-radius: 6px;
+    border: var(--outline) solid var(--ink);
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-weight: 700;
-    color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    color: #fff;
+    box-shadow: 2px 2px 0 var(--ink);
 }
 
 .history-item.green { background-color: var(--safe); }
 .history-item.red { background-color: var(--danger); }
-.history-item.gold { background-color: var(--special); color: #111; }
+.history-item.gold { background-color: var(--special); color: #1A1A1A; }
 
 /* ============ 4. ANIMASI ============ */
 
