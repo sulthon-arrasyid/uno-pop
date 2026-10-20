@@ -23,8 +23,8 @@
     --radius-sm: 10px;
     --shadow: 3px 3px 0 var(--ink);
 
-    /* Pola titik (halus) */
-    --dot: rgba(26,26,26,0.06);
+    /* Pola titik (halus tapi terlihat) */
+    --dot: rgba(26,26,26,0.12);
 
     /* Gerak */
     --dur-fast: 120ms;
@@ -69,8 +69,8 @@
 
 body {
     background-color: var(--bg);
-    background-image: radial-gradient(var(--dot) 1.5px, transparent 1.5px);
-    background-size: 22px 22px;
+    background-image: radial-gradient(var(--dot) 2px, transparent 2px);
+    background-size: 20px 20px;
     color: var(--ink);
     font-family: 'Nunito', 'Segoe UI', Roboto, system-ui, sans-serif;
     font-size: 16px;
