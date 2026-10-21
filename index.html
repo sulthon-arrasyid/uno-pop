@@ -32,17 +32,56 @@
     <button id="btn-toggle-settings" class="btn-secondary">⚙️ Atur Deck Custom</button>
 
     <!-- Panel Pengaturan Deck -->
-    <section class="deck-builder" id="deck-builder-panel" style="display: none;">
+    <section class="deck-builder" id="deck-builder-panel">
         <h3>Pengaturan Jumlah Kartu</h3>
-        <div class="input-group">
-            <label>Kartu +1: <input type="number" id="input-plus1" value="5" min="0"></label>
-            <label>Kartu +2: <input type="number" id="input-plus2" value="2" min="0"></label>
-            <label>Kartu +3: <input type="number" id="input-plus3" value="1" min="0"></label>
-            <label>Kartu POP! +1: <input type="number" id="input-pop1" value="1" min="0"></label>
-            <label>Kartu POP! +2: <input type="number" id="input-pop2" value="1" min="0"></label>
-            <label>Kartu UNO!: <input type="number" id="input-uno" value="1" min="0"></label>
+        <div class="deck-grid">
+            <div class="deck-group">
+                <h4 class="group-safe">Aman</h4>
+                <div class="stepper">
+                    <button type="button" class="step" data-target="input-plus1" data-step="-1" aria-label="Kurangi +1">−</button>
+                    <input type="number" id="input-plus1" value="5" min="0" max="30">
+                    <span class="stepper-label">+1</span>
+                    <button type="button" class="step" data-target="input-plus1" data-step="1" aria-label="Tambah +1">+</button>
+                </div>
+                <div class="stepper">
+                    <button type="button" class="step" data-target="input-plus2" data-step="-1" aria-label="Kurangi +2">−</button>
+                    <input type="number" id="input-plus2" value="2" min="0" max="30">
+                    <span class="stepper-label">+2</span>
+                    <button type="button" class="step" data-target="input-plus2" data-step="1" aria-label="Tambah +2">+</button>
+                </div>
+                <div class="stepper">
+                    <button type="button" class="step" data-target="input-plus3" data-step="-1" aria-label="Kurangi +3">−</button>
+                    <input type="number" id="input-plus3" value="1" min="0" max="30">
+                    <span class="stepper-label">+3</span>
+                    <button type="button" class="step" data-target="input-plus3" data-step="1" aria-label="Tambah +3">+</button>
+                </div>
+            </div>
+            <div class="deck-group">
+                <h4 class="group-pop">POP!</h4>
+                <div class="stepper">
+                    <button type="button" class="step" data-target="input-pop1" data-step="-1" aria-label="Kurangi POP +1">−</button>
+                    <input type="number" id="input-pop1" value="1" min="0" max="30">
+                    <span class="stepper-label">+1</span>
+                    <button type="button" class="step" data-target="input-pop1" data-step="1" aria-label="Tambah POP +1">+</button>
+                </div>
+                <div class="stepper">
+                    <button type="button" class="step" data-target="input-pop2" data-step="-1" aria-label="Kurangi POP +2">−</button>
+                    <input type="number" id="input-pop2" value="1" min="0" max="30">
+                    <span class="stepper-label">+2</span>
+                    <button type="button" class="step" data-target="input-pop2" data-step="1" aria-label="Tambah POP +2">+</button>
+                </div>
+            </div>
+            <div class="deck-group">
+                <h4 class="group-uno">UNO!</h4>
+                <div class="stepper">
+                    <button type="button" class="step" data-target="input-uno" data-step="-1" aria-label="Kurangi UNO">−</button>
+                    <input type="number" id="input-uno" value="1" min="0" max="30">
+                    <span class="stepper-label">UNO!</span>
+                    <button type="button" class="step" data-target="input-uno" data-step="1" aria-label="Tambah UNO">+</button>
+                </div>
+            </div>
         </div>
-        <button id="btn-save-deck" class="btn-primary">Simpan & Reset</button>
+        <button id="btn-save-deck" class="btn-primary">Simpan &amp; Reset</button>
     </section>
 
     <!-- Status Permainan -->
