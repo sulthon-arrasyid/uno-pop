@@ -40,8 +40,74 @@ const DOM = {
     btnSaveDeck: document.getElementById('btn-save-deck'),
     deckBuilderPanel: document.getElementById('deck-builder-panel'),
     historyList: document.getElementById('history-list'),
-    historyCount: document.getElementById('history-count')
+    historyCount: document.getElementById('history-count'),
+    appContainer: document.querySelector('.app-container')
 };
+
+// ==========================================
+// Efek Confetti (hand-rolled, tanpa dependency)
+// ==========================================
+function fireConfetti() {
+    // Hormati preferensi reduce-motion (CSS tidak bisa menghentikan animasi canvas)
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999';
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const rect = DOM.activeCard.getBoundingClientRect();
+    const ox = rect.left + rect.width / 2;
+    const oy = rect.top + rect.height / 2;
+    // Palet condong ke emas (momen UNO!)
+    const colors = ['#F2B705', '#FFD400', '#F2B705', '#FFD400', '#1FA35A', '#E23B3B'];
+
+    const parts = Array.from({ length: 100 }, () => ({
+        x: ox, y: oy,
+        vx: (Math.random() - 0.5) * 10,
+        vy: (Math.random() * -12) - 4,
+        r: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 0.4,
+        size: 5 + Math.random() * 6,
+        color: colors[(Math.random() * colors.length) | 0]
+    }));
+
+    const start = performance.now();
+    const DURATION = 1600;
+    let raf;
+
+    function frame(now) {
+        const t = now - start;
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        parts.forEach(p => {
+            p.vy += 0.35;      // gravitasi
+            p.x += p.vx;
+            p.y += p.vy;
+            p.r += p.vr;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.r);
+            ctx.globalAlpha = Math.max(0, 1 - t / DURATION);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+        });
+        if (t < DURATION) {
+            raf = requestAnimationFrame(frame);
+        } else {
+            cancelAnimationFrame(raf);
+            canvas.remove();   // bersihkan — hindari kebocoran
+        }
+    }
+    raf = requestAnimationFrame(frame);
+}
 
 // ==========================================
 // 3. Sistem LocalStorage
@@ -165,6 +231,16 @@ function drawCard() {
     DOM.activeCard.classList.remove('animate-flip');
     void DOM.activeCard.offsetWidth; // Trigger reflow animasi
     DOM.activeCard.classList.add('animate-flip');
+
+    // Efek "momen besar"
+    if (card.type === 'pop') {
+        // Goyangan layar (retrigger via reflow, seperti flip)
+        DOM.appContainer.classList.remove('shake');
+        void DOM.appContainer.offsetWidth;
+        DOM.appContainer.classList.add('shake');
+    } else if (card.type === 'uno') {
+        fireConfetti();
+    }
 }
 
 // ==========================================
@@ -188,9 +264,13 @@ function render() {
     DOM.historyCount.textContent = state.drawnCards.length;
     DOM.historyList.innerHTML = '';
     
-    state.drawnCards.forEach(c => {
+    state.drawnCards.forEach((c, i) => {
         const span = document.createElement('span');
         span.className = `history-item ${c.color}`;
+        // Hanya chip terbaru yang beranimasi masuk (render() membangun ulang seluruh daftar)
+        if (i === state.drawnCards.length - 1 && state.activeCard) {
+            span.classList.add('chip-in');
+        }
         span.textContent = c.label;
         DOM.historyList.appendChild(span);
     });
