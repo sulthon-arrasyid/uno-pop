@@ -123,9 +123,8 @@ header h1 .title-mark::before {
 
 /* ============ 3. KOMPONEN ============ */
 
-/* Permukaan panel bersama (status, deck-builder, riwayat) */
+/* Permukaan panel bersama (status, riwayat) */
 .status-panel,
-.deck-builder,
 .history-panel {
     background: var(--surface);
     border: var(--outline) solid var(--ink);
@@ -135,32 +134,106 @@ header h1 .title-mark::before {
     margin-bottom: 20px;
 }
 
-/* Kustomisasi Deck Builder */
+/* Deck Builder — panel lipat (buka/tutup dianimasikan via .is-open) */
+.deck-builder {
+    background: var(--surface);
+    border: var(--outline) solid var(--ink);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-6px);
+    padding: 0 16px;
+    margin-bottom: 0;
+    transition: max-height var(--dur) var(--ease),
+                opacity var(--dur) ease,
+                transform var(--dur) ease,
+                padding var(--dur) ease,
+                margin var(--dur) ease;
+}
+
+.deck-builder.is-open {
+    max-height: 600px;
+    opacity: 1;
+    transform: none;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
 .deck-builder h3 {
     font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-size: 18px;
     font-weight: 600;
     color: var(--ink);
 }
 
-.input-group label {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    align-items: center;
-    font-weight: 700;
+/* Grid pengaturan deck, dikelompokkan per tipe */
+.deck-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
 }
 
-.input-group input {
-    width: 60px;
+.deck-group h4 {
+    font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.group-safe { color: var(--safe); }
+.group-pop { color: var(--danger); }
+.group-uno { color: var(--special); }
+
+.stepper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.stepper input {
+    width: 44px;
     text-align: center;
     background: var(--bg);
     color: var(--ink);
     border: var(--outline) solid var(--ink);
     border-radius: var(--radius-sm);
-    padding: 5px;
+    padding: 4px;
+    font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
     font-size: 1rem;
+    font-weight: 600;
+}
+
+.stepper-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    min-width: 32px;
+}
+
+/* Tombol stepper +/- (mewarisi outline + shadow + push-down dari `button`) */
+.step {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    min-height: auto;
+    padding: 0;
+    border-radius: var(--radius-sm);
+    font-size: 1.3rem;
+    line-height: 1;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 2px 2px 0 var(--ink);
+}
+
+.step:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: none;
 }
 
 .status-row {
@@ -372,10 +445,12 @@ button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow
 @media (prefers-reduced-motion: reduce) {
     .card.gold::after { animation: none; }
     .card.empty { animation: none; }
+    .deck-builder { transition: none; }
 }
 
 /* ============ 6. RESPONSIVE ============ */
 @media (max-width: 400px) {
     .actions { flex-direction: column; }
     .card { width: 180px; height: 270px; font-size: 2.8rem; }
+    .deck-grid { grid-template-columns: 1fr; }
 }
