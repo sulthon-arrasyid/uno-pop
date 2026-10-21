@@ -440,12 +440,33 @@ button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow
     50% { transform: translateY(-4px); }
 }
 
+/* Goyangan layar saat POP! */
+@keyframes shake {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-6px, 2px); }
+    40% { transform: translate(6px, -2px); }
+    60% { transform: translate(-4px, 1px); }
+    80% { transform: translate(4px, -1px); }
+}
+.app-container.shake { animation: shake 0.35s ease; }
+
+/* Kemunculan chip riwayat terbaru */
+@keyframes chipIn {
+    from { opacity: 0; transform: scale(0.6) translateY(6px); }
+    to { opacity: 1; transform: none; }
+}
+.history-item.chip-in { animation: chipIn var(--dur) var(--ease); }
+
 /* ============ 5. REDUCED-MOTION ============ */
-/* Fase 2 hanya menjaga 2 efek baru di sini; sapuan lengkap ada di Fase 4 (A11Y-01). */
+/* Sapuan lengkap A11Y-01: semua gerak dekoratif dimatikan; flip SENGAJA dipertahankan
+   karena merupakan umpan balik esensial bahwa kartu telah ditarik. */
 @media (prefers-reduced-motion: reduce) {
-    .card.gold::after { animation: none; }
-    .card.empty { animation: none; }
-    .deck-builder { transition: none; }
+    .card.gold::after { animation: none; }       /* shine UNO! */
+    .card.empty { animation: none; }              /* pulse idle */
+    .deck-builder { transition: none; }            /* panel slide */
+    .app-container.shake { animation: none; }      /* goyangan POP! */
+    .history-item.chip-in { animation: none; }     /* kemunculan chip */
+    /* .card.animate-flip TIDAK dimatikan — umpan balik esensial */
 }
 
 /* ============ 6. RESPONSIVE ============ */
