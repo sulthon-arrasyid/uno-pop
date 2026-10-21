@@ -200,16 +200,35 @@ function render() {
 // 7. Event Listeners & Bootstrapping
 // ==========================================
 
-// Tombol Panel Setting
+// Label tombol pengaturan mengikuti status panel (buka/tutup)
+function setPanelLabel(open) {
+    DOM.btnToggleSettings.textContent = open ? '✕ Tutup Pengaturan' : '⚙️ Atur Deck Custom';
+    DOM.btnToggleSettings.classList.toggle('is-active', open);
+}
+
+// Tombol Panel Setting — buka/tutup via class (bukan inline display)
 DOM.btnToggleSettings.addEventListener('click', () => {
-    const isHidden = DOM.deckBuilderPanel.style.display === 'none';
-    DOM.deckBuilderPanel.style.display = isHidden ? 'block' : 'none';
+    const open = DOM.deckBuilderPanel.classList.toggle('is-open');
+    setPanelLabel(open);
 });
 
 // Tombol Simpan Setting Deck
 DOM.btnSaveDeck.addEventListener('click', () => {
     initGame(true); // Param `true` akan memaksa game reset
-    DOM.deckBuilderPanel.style.display = 'none';
+    DOM.deckBuilderPanel.classList.remove('is-open');
+    setPanelLabel(false);
+});
+
+// Tombol stepper +/- (delegasi) — ubah nilai input yang sama dengan clamp [0, max]
+DOM.deckBuilderPanel.addEventListener('click', (e) => {
+    const btn = e.target.closest('.step');
+    if (!btn) return;
+    const input = document.getElementById(btn.dataset.target);
+    if (!input) return;
+    const step = parseInt(btn.dataset.step, 10) || 0;
+    const max = parseInt(input.max, 10) || 30;
+    const current = parseInt(input.value, 10) || 0;
+    input.value = Math.min(max, Math.max(0, current + step));
 });
 
 // Tombol Main & Reset
