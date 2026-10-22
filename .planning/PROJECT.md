@@ -23,23 +23,17 @@ The app must feel like a deliberately designed, playful-but-modern product — t
 - ✓ Game state persistence via localStorage (resume on reload) — existing
 - ✓ Draw history panel — existing
 - ✓ Offline support + installable PWA (service worker + manifest) — existing
+- ✓ Cohesive "soft neo-brutalist" visual foundation: cream+dot background, thin rounded outlines, self-hosted Fredoka/Nunito, yellow brand, skewed title highlight — Phase 1 (FND-01, FND-02, FND-03, TYP-01, TYP-02, TYP-03)
+- ✓ New color palette defined as `:root` tokens with 3 functional accents (Aman=green, POP!=red, UNO!=gold) + brand yellow, AA-checked — Phase 1 (FND-04)
+- ✓ Core surfaces restyled: hybrid outlined card (flip preserved), metallic UNO! gold with glow+shine, inviting idle state, pill buttons with push-down press, outlined history chips — Phase 2 (CARD-01, CARD-02, CARD-03, PANEL-01, BTN-01, HIST-01)
+- ✓ Deck builder restyled: grouped grid + −/+ steppers, class-based animated slide-down toggle with stateful label, light validation; deck logic preserved — Phase 3 (DECK-01, DECK-02, DECK-03)
+- ✓ Big moments & motion: hand-rolled canvas confetti on UNO!, screen shake on POP!, newest-chip entrance, and comprehensive prefers-reduced-motion (decorative motion off, flip kept) — Phase 4 (FX-01, FX-02, FX-03, FX-04, A11Y-01)
 
 ### Active
 
 <!-- Current scope: visual/UX polish. Building toward these. -->
 
-- [ ] Establish a cohesive "soft neo-brutalist" visual identity (cream background + subtle dot texture, thin rounded black outlines, rounded friendly display font, yellow brand color)
-- [ ] Define and apply a new color palette with 3 functional accents: Aman = green, POP! = red, UNO! = yellow/gold (gold given special "spesial" treatment to distinguish from brand yellow)
-- [ ] Redesign the card display to match the new style (keep the existing flip animation intact)
-- [ ] Redesign the status panel (sisa deck / akumulasi / status message) to feel designed, not form-like
-- [ ] Redesign the custom deck builder panel and its number inputs to match the style (currently dashed-border / plain inputs)
-- [ ] Redesign buttons (Ambil Kartu / Reset / Atur Deck) as styled pill buttons with the new look
-- [ ] Redesign the history panel and history chips
-- [ ] Improve typography and layout hierarchy/spacing across the whole app
-- [ ] Add "big moment" celebratory effects — e.g. confetti/particles on UNO!, screen shake on POP!
-- [ ] Add micro-interactions / transitions (button press feedback, panel open/close, history item entrance)
-- [ ] Improve the idle/empty card state (`?`) to be more inviting
-- [ ] Respect `prefers-reduced-motion` for the added effects (accessibility)
+- ✓ Mobile QA (stepper tap targets 44px, 360px layout holds), SW audio precache (v5), manifest theme sync, localStorage/haptics/PWA preservation confirmed, README fully rewritten — Phase 5 (QA-01, QA-02, PRES-01, PRES-02, PRES-03, PRES-04)
 
 ### Out of Scope
 
@@ -98,4 +92,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: October 20, 2026 after initialization*
+*Last updated: October 22, 2026 after Phase 5 (Responsive QA & Housekeeping) completion — milestone v1.0 all 5 phases complete*
