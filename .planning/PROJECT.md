@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A single-player web app (PWA) that simulates drawing from a configurable "UNO Pop" card deck — you draw cards one at a time, accumulate safe points, and the round ends when you hit a POP! or UNO! card. It runs fully offline after first load, installs to a phone's home screen, and is built with 100% vanilla HTML/CSS/JS (no framework, no build step). This milestone is a **visual/UX polish pass** to replace the current generic "Bootstrap-basic" look with a cohesive, designed identity.
+A single-player web app (PWA) that simulates drawing from a configurable "UNO Pop" card deck — you draw cards one at a time, accumulate safe points, and the round ends when you hit a POP! or UNO! card. It runs fully offline after first load, installs to a phone's home screen, and is built with 100% vanilla HTML/CSS/JS (no framework, no build step). The app has a cohesive **soft neo-brutalist visual identity**: cream background with dot pattern, thin rounded outlines, Fredoka/Nunito self-hosted fonts, yellow brand, three functional accents, canvas confetti and screen-shake big-moment effects — all while preserving every original gameplay behavior.
 
 ## Core Value
 
@@ -27,13 +27,14 @@ The app must feel like a deliberately designed, playful-but-modern product — t
 - ✓ New color palette defined as `:root` tokens with 3 functional accents (Aman=green, POP!=red, UNO!=gold) + brand yellow, AA-checked — Phase 1 (FND-04)
 - ✓ Core surfaces restyled: hybrid outlined card (flip preserved), metallic UNO! gold with glow+shine, inviting idle state, pill buttons with push-down press, outlined history chips — Phase 2 (CARD-01, CARD-02, CARD-03, PANEL-01, BTN-01, HIST-01)
 - ✓ Deck builder restyled: grouped grid + −/+ steppers, class-based animated slide-down toggle with stateful label, light validation; deck logic preserved — Phase 3 (DECK-01, DECK-02, DECK-03)
-- ✓ Big moments & motion: hand-rolled canvas confetti on UNO!, screen shake on POP!, newest-chip entrance, and comprehensive prefers-reduced-motion (decorative motion off, flip kept) — Phase 4 (FX-01, FX-02, FX-03, FX-04, A11Y-01)
+- ✓ Big moments & motion: hand-rolled canvas confetti on UNO!, screen shake on POP!, newest-chip entrance, and comprehensive prefers-reduced-motion (decorative motion off, flip kept) — v1.0 Phase 4 (FX-01, FX-02, FX-03, FX-04, A11Y-01)
+- ✓ Mobile QA (stepper tap targets 44px, 360px layout holds), SW audio precache (v5), manifest theme sync (#F4ECD8), localStorage/haptics/PWA preservation confirmed, README fully rewritten in Indonesian — v1.0 Phase 5 (QA-01, QA-02, PRES-01, PRES-02, PRES-03, PRES-04)
 
 ### Active
 
-<!-- Current scope: visual/UX polish. Building toward these. -->
+<!-- Next milestone scope — not yet started. -->
 
-- ✓ Mobile QA (stepper tap targets 44px, 360px layout holds), SW audio precache (v5), manifest theme sync, localStorage/haptics/PWA preservation confirmed, README fully rewritten — Phase 5 (QA-01, QA-02, PRES-01, PRES-02, PRES-03, PRES-04)
+*(none — all v1.0 requirements shipped. Start v1.1 with `/gsd-new-milestone`.)*
 
 ### Out of Scope
 
@@ -48,12 +49,11 @@ The app must feel like a deliberately designed, playful-but-modern product — t
 
 ## Context
 
-- **Brownfield.** The app already works and has evolved well beyond its original version. Current state is mapped accurately in `.planning/codebase/` (STACK, ARCHITECTURE, STRUCTURE, CONVENTIONS, TESTING, INTEGRATIONS, CONCERNS).
-- **Current look:** dark theme (#121212), flat solid-color cards (green/red/gold), yellow title accent (#FFD700). User's complaint: it feels like generic Bootstrap, lacking character.
-- **Design direction:** "soft/friendly neo-brutalist" based on a user-provided reference — cream/off-white background with a subtle dot pattern, **thin** (not heavy) rounded black outlines, rounded playful display font, yellow as the primary brand color, sparing bright accents, and highlight-marker ("stabilo") touches on active elements. Light geometric decoration as seasoning, not clutter.
+- **Shipped v1.0** (2026-10-22). The full soft neo-brutalist redesign is live — cream background with dot pattern, Fredoka/Nunito fonts, thin rounded outlines, yellow brand, confetti/shake big-moment effects, stepper deck builder, `prefers-reduced-motion` throughout.
+- **Architecture:** Single `state` object → `render()` pattern in `js/app.js`; styling centralized in `css/style.css`; element IDs in `index.html`. 100% vanilla, no build step.
+- **Service worker:** `CACHE_NAME = 'unopop-cache-v5'`. All 13 assets precached including audio files (added in v1.0 Phase 5).
 - **UI language:** Indonesian (`lang="id"`); all UI copy stays Indonesian.
-- **Architecture to respect:** single `state` object → `render()` pattern in `js/app.js`; styling centralized in `css/style.css`; element IDs in `index.html`. Polish should work within this structure.
-- **Known issues worth folding in during polish** (from CONCERNS.md): deck-builder toggled via inline `style.display` (consider class-based for smooth transitions); audio files not yet precached in `sw.js`; outdated README; unguarded `JSON.parse` in `loadState()`; no `prefers-reduced-motion` handling. Any `sw.js` asset change requires bumping `CACHE_NAME`.
+- **Remaining tech debt (from CONCERNS.md):** Unguarded `JSON.parse` in `loadState()` (V2-02, deferred); single SVG icon in manifest (PNG variants not yet added); theme_color now synced to cream (#F4ECD8); `.mpeg` audio extension (verify MIME type on GitHub Pages).
 
 ## Constraints
 
@@ -67,12 +67,15 @@ The app must feel like a deliberately designed, playful-but-modern product — t
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Visual direction = soft/friendly neo-brutalist (cream + dots + thin rounded outlines + rounded font) | User picked neo-brutalist from mockups but asked for a lighter, friendlier take matching a reference image | — Pending |
-| Single theme only (no light/dark toggle) | User decision — keep it focused | — Pending |
-| 3 functional accents: Aman=green, POP!=red, UNO!=yellow/gold | Preserve established card-color meaning so players aren't confused; refresh the exact hues to fit the new theme | — Pending |
-| UNO! = gold with special treatment (glow/shine) to distinguish from brand yellow | User wants UNO! to stay yellow/gold, but brand is also yellow — needs differentiation | — Pending |
-| Keep the 3D flip animation as-is | User explicitly likes it | — Pending |
-| Any new library must be vendored locally + precached, never runtime CDN | Protects the offline PWA guarantee and no-install constraint | — Pending |
+| Visual direction = soft/friendly neo-brutalist (cream + dots + thin rounded outlines + rounded font) | User picked neo-brutalist from mockups but asked for a lighter, friendlier take matching a reference image | ✓ Shipped — cream (#F4ECD8) + dot BG, Fredoka/Nunito, ink outlines throughout |
+| Single theme only (no light/dark toggle) | User decision — keep it focused | ✓ Shipped — one theme, no toggle |
+| 3 functional accents: Aman=green, POP!=red, UNO!=yellow/gold | Preserve established card-color meaning so players aren't confused; refresh the exact hues to fit the new theme | ✓ Shipped — green/red/gold accents via CSS tokens |
+| UNO! = gold with special treatment (glow/shine) to distinguish from brand yellow | User wants UNO! to stay yellow/gold, but brand is also yellow — needs differentiation | ✓ Shipped — metallic gold + animated shine sweep |
+| Keep the 3D flip animation as-is | User explicitly likes it | ✓ Preserved — flip untouched in all phases |
+| Any new library must be vendored locally + precached, never runtime CDN | Protects the offline PWA guarantee and no-install constraint | ✓ Enforced — hand-rolled confetti inline, no external deps added |
+| Hand-rolled canvas confetti (no library) | Preserves vanilla purity and avoids cache bump for new asset | ✓ Shipped — inline in js/app.js, no new file |
+| `prefers-reduced-motion` disables all decorative motion but keeps the flip | Flip is essential feedback that a card was drawn; decorative effects are optional | ✓ Shipped — comprehensive reduced-motion policy |
+| Audio files added to SW precache (v5) | Offline users got no audio (cache miss); fixing PRES-01 | ✓ Shipped — 3 audio files in urlsToCache, CACHE_NAME bumped to v5 |
 
 ## Evolution
 
@@ -92,4 +95,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: October 22, 2026 after Phase 5 (Responsive QA & Housekeeping) completion — milestone v1.0 all 5 phases complete*
+*Last updated: October 22, 2026 after v1.0 milestone completion — all 5 phases shipped, 27/27 requirements validated*
