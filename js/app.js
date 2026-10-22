@@ -188,8 +188,10 @@ function drawCard() {
 
     const card = state.deck.pop();
     
-    // Haptic Feedback (Getar HP)
-    if (navigator.vibrate) navigator.vibrate(card.type === 'safe' ? 50 : 200);
+    // Haptic Feedback (Getar HP) — dibungkus rAF agar tidak blokir audio di Android PWA
+    if (navigator.vibrate) {
+        requestAnimationFrame(() => navigator.vibrate(card.type === 'safe' ? 50 : 200));
+    }
 
     // Mainkan Audio dengan fungsi pengaman
     if (card.type === 'safe') playAudioSafe(sfxDraw);
