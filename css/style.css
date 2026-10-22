@@ -154,7 +154,7 @@ header h1 .title-mark::before {
 }
 
 .deck-builder.is-open {
-    max-height: 600px;
+    max-height: 700px;
     opacity: 1;
     transform: none;
     padding: 16px;
@@ -179,6 +179,11 @@ header h1 .title-mark::before {
 
 .deck-group {
     min-width: 0;
+}
+
+/* UNO! group membentang penuh — hanya punya satu stepper */
+.deck-group:last-child {
+    grid-column: 1 / -1;
 }
 
 .deck-group h4 {
@@ -214,22 +219,22 @@ header h1 .title-mark::before {
 }
 
 .stepper-label {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: var(--ink-soft);
-    min-width: 28px;
-    margin-top: 8px;
+    min-width: 24px;
+    text-align: center;
 }
 
 /* Tombol stepper +/- (mewarisi outline + shadow + push-down dari `button`) */
 .step {
     flex: 0 0 auto;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     min-height: auto;
     padding: 0;
     border-radius: var(--radius-sm);
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     line-height: 1;
     display: inline-flex;
     align-items: center;
@@ -242,6 +247,12 @@ header h1 .title-mark::before {
 .step:active:not(:disabled) {
     transform: translate(2px, 2px);
     box-shadow: none;
+}
+
+/* Tombol Simpan di dalam deck-builder — harus full-width */
+#btn-save-deck {
+    width: 100%;
+    margin-top: 4px;
 }
 
 .status-row {
