@@ -3,8 +3,8 @@
   "short_name": "UNO Pop",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#121212",
-  "theme_color": "#1e1e1e",
+  "background_color": "#F4ECD8",
+  "theme_color": "#F4ECD8",
   "icons": [
     {
       "src": "assets/icon.svg",

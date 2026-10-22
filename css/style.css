@@ -219,13 +219,16 @@ header h1 .title-mark::before {
 /* Tombol stepper +/- (mewarisi outline + shadow + push-down dari `button`) */
 .step {
     flex: 0 0 auto;
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
     min-height: auto;
     padding: 0;
     border-radius: var(--radius-sm);
     font-size: 1.3rem;
     line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background: var(--surface);
     color: var(--ink);
     box-shadow: 2px 2px 0 var(--ink);

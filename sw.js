@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unopop-cache-v4';
+const CACHE_NAME = 'unopop-cache-v5';
 const urlsToCache = [
   './',
   './index.html',
@@ -9,7 +9,10 @@ const urlsToCache = [
   './assets/fonts/fredoka-600.woff2',
   './assets/fonts/fredoka-700.woff2',
   './assets/fonts/nunito-400.woff2',
-  './assets/fonts/nunito-700.woff2'
+  './assets/fonts/nunito-700.woff2',
+  './assets/audio/draw.mpeg',
+  './assets/audio/pop.mpeg',
+  './assets/audio/uno.mpeg'
 ];
 
 self.addEventListener('install', event => {
